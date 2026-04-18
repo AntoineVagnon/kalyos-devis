@@ -32,6 +32,11 @@ export function ArtisanForm({ value, onChange }: Props) {
   function handleLogo(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
+    if (!['image/png', 'image/jpeg'].includes(file.type)) {
+      alert('Format non supporté. Veuillez utiliser un fichier PNG ou JPG.');
+      e.target.value = '';
+      return;
+    }
     const reader = new FileReader();
     reader.onload = () => onChange({ ...value, logo_base64: reader.result as string });
     reader.readAsDataURL(file);

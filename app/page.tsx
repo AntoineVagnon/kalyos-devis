@@ -64,11 +64,14 @@ export default function HomePage() {
 
   function validate(): string | null {
     if (!artisan.nom_societe.trim()) return 'Veuillez renseigner le nom de votre société.';
-    if (!artisan.siret.trim()) return 'Veuillez renseigner votre SIRET.';
+    const siretClean = artisan.siret.replace(/\s/g, '');
+    if (!siretClean) return 'Veuillez renseigner votre SIRET.';
+    if (!/^\d{14}$/.test(siretClean)) return 'SIRET invalide — 14 chiffres requis.';
     if (!artisan.adresse.trim()) return "Veuillez renseigner l'adresse de votre société.";
     if (!client.nom.trim()) return 'Veuillez renseigner le nom du client.';
     if (!client.adresse.trim()) return "Veuillez renseigner l'adresse du client.";
     if (lineItems.length === 0) return 'Ajoutez au moins une ligne de prestation.';
+    if (lineItems.some((i) => i.quantite <= 0)) return 'Les quantités doivent être supérieures à 0.';
     return null;
   }
 
