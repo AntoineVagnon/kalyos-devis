@@ -19,7 +19,6 @@ import {
   saveQuote,
 } from '@/lib/storage';
 import { quoteTotals } from '@/lib/calculations';
-import { buildShareUrl } from '@/lib/share';
 import { generateQuotePDF } from '@/lib/pdf';
 import type { ArtisanProfile, ClientInfo, LineItem, Quote } from '@/lib/types';
 
@@ -43,8 +42,7 @@ export default function HomePage() {
   const [lineItems, setLineItems] = useState<LineItem[]>([]);
   const [activeTab, setActiveTab] = useState<Tab>('artisan');
   const [generating, setGenerating] = useState(false);
-  const [shareUrl, setShareUrl] = useState<string | null>(null);
-  const [copied, setCopied] = useState(false);
+  const [pdfGenerated, setPdfGenerated] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -99,22 +97,13 @@ export default function HomePage() {
       await generateQuotePDF(quote);
       saveQuote(quote);
       incrementCounter();
-
-      const url = buildShareUrl(quote);
-      setShareUrl(url);
+      setPdfGenerated(true);
     } catch (err) {
       setError('Erreur lors de la génération du PDF. Veuillez réessayer.');
       console.error(err);
     } finally {
       setGenerating(false);
     }
-  }
-
-  async function handleCopyLink() {
-    if (!shareUrl) return;
-    await navigator.clipboard.writeText(shareUrl);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2500);
   }
 
   const tabs: { id: Tab; label: string }[] = [
@@ -214,32 +203,17 @@ export default function HomePage() {
           {generating ? 'Génération en cours...' : 'Générer le devis PDF'}
         </Button>
 
-        {/* Share section — appears after generation */}
-        {shareUrl && (
+        {/* Success message — appears after PDF generation */}
+        {pdfGenerated && (
           <Card className="bg-[#f5f5f4] border-[#e7e5e4]">
             <CardHeader className="pb-2">
               <CardTitle className="text-base font-semibold text-[#1c1917]">
-                Devis généré avec succès
+                Devis généré avec succès ✓
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3">
+            <CardContent>
               <p className="text-sm text-[#78716c]">
-                Partagez ce lien avec votre client. Il pourra consulter et accepter le devis en
-                ligne.
-              </p>
-              <div className="flex gap-2">
-                <input
-                  readOnly
-                  value={shareUrl}
-                  className="flex-1 text-xs bg-white border border-[#e7e5e4] rounded px-3 py-2 font-mono overflow-hidden text-ellipsis"
-                />
-                <Button type="button" variant="outline" onClick={handleCopyLink} className="shrink-0">
-                  {copied ? 'Copié !' : 'Copier'}
-                </Button>
-              </div>
-              <p className="text-xs text-[#a8a29e]">
-                Le lien est valable 30 jours. Il fonctionne dans le même navigateur — le partage
-                cross-appareil sera disponible dans la version complète.
+                Votre PDF a été téléchargé. Vous pouvez générer un nouveau devis en modifiant le formulaire.
               </p>
             </CardContent>
           </Card>

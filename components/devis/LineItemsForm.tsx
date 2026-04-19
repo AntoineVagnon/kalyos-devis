@@ -99,7 +99,8 @@ export function LineItemsForm({ items, onChange }: Props) {
                   type="number"
                   min="0"
                   step="0.01"
-                  value={item.prix_unitaire_ht}
+                  value={item.prix_unitaire_ht === 0 ? '' : item.prix_unitaire_ht}
+                  placeholder="0.00"
                   onChange={(e) =>
                     updateItem(item.id, { prix_unitaire_ht: parseFloat(e.target.value) || 0 })
                   }

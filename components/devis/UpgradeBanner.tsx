@@ -4,8 +4,7 @@ export function UpgradeBanner() {
   return (
     <div className="fixed top-0 left-0 right-0 z-50 bg-[#1c1917] text-[#fafaf9] px-4 py-2.5 flex items-center justify-between gap-4 text-sm">
       <span className="text-[#a8a29e] text-xs">
-        Devis illimités gratuits. Pour ajouter CRM, relances auto, signature électronique :{' '}
-        <span className="text-white">version complète adaptée à votre métier en 14 jours / 7 500 EUR HT</span>
+        Devis illimités gratuits. Besoin d&apos;un outil complet adapté à votre métier (CRM, relances auto, signature) ?
       </span>
       <a
         href="https://kalyos.co/contact"

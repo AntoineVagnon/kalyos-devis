@@ -4,7 +4,33 @@ import type { Quote } from './types';
 import { formatEur, lineTotal, quoteTotals } from './calculations';
 import { getLegalMentions, KALYOS_FOOTER } from './legal-mentions';
 
+async function computeLogoDims(
+  base64: string
+): Promise<{ w: number; h: number }> {
+  return new Promise((resolve) => {
+    const img = new globalThis.Image();
+    img.onload = () => {
+      const maxW = 40;
+      const maxH = 20;
+      const ratio = img.naturalWidth / img.naturalHeight;
+      let w = maxW;
+      let h = w / ratio;
+      if (h > maxH) {
+        h = maxH;
+        w = h * ratio;
+      }
+      resolve({ w, h });
+    };
+    img.onerror = () => resolve({ w: 30, h: 15 });
+    img.src = base64;
+  });
+}
+
 export async function generateQuotePDF(quote: Quote): Promise<void> {
+  const logoDims = quote.artisan_profile.logo_base64
+    ? await computeLogoDims(quote.artisan_profile.logo_base64)
+    : null;
+
   const { jsPDF } = await import('jspdf');
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
 
@@ -31,14 +57,14 @@ export async function generateQuotePDF(quote: Quote): Promise<void> {
   }
 
   // Logo
-  if (quote.artisan_profile.logo_base64) {
+  if (quote.artisan_profile.logo_base64 && logoDims) {
     try {
       const ext = quote.artisan_profile.logo_base64.includes('image/png') ? 'PNG' : 'JPEG';
-      doc.addImage(quote.artisan_profile.logo_base64, ext, marginL, y, 30, 15);
+      doc.addImage(quote.artisan_profile.logo_base64, ext, marginL, y, logoDims.w, logoDims.h);
     } catch {
       // logo load failed — fallback to company name only
     }
-    y += 18;
+    y += logoDims.h + 3;
   }
 
   // Artisan info block
@@ -111,7 +137,7 @@ export async function generateQuotePDF(quote: Quote): Promise<void> {
     text(formatEur(item.prix_unitaire_ht), marginL + 115, y, { align: 'right', size: 9 });
     text(`${item.taux_tva}%`, marginL + 135, y, { align: 'right', size: 9 });
     text(formatEur(ht), pageW - marginR, y, { align: 'right', size: 9 });
-    y += Math.max(descLines.length * 5, 6);
+    y += Math.max(descLines.length * 5, 5);
 
     // light separator
     doc.setDrawColor('#e7e5e4');
