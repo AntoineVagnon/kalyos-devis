@@ -196,6 +196,7 @@ export default function HomePage() {
 
         {/* Generate button */}
         <Button
+          data-testid="generate-pdf-btn"
           onClick={handleGenerate}
           disabled={generating}
           className="w-full py-6 text-base font-semibold bg-[#1c1917] hover:bg-[#292524] text-white"
@@ -205,7 +206,7 @@ export default function HomePage() {
 
         {/* Success message — appears after PDF generation */}
         {pdfGenerated && (
-          <Card className="bg-[#f5f5f4] border-[#e7e5e4]">
+          <Card data-testid="pdf-success" className="bg-[#f5f5f4] border-[#e7e5e4]">
             <CardHeader className="pb-2">
               <CardTitle className="text-base font-semibold text-[#1c1917]">
                 Devis généré avec succès ✓
