@@ -88,6 +88,7 @@ export function LineItemsForm({ items, onChange }: Props) {
                   min="0"
                   step="0.5"
                   value={item.quantite}
+                  onFocus={(e) => e.target.select()}
                   onChange={(e) =>
                     updateItem(item.id, { quantite: parseFloat(e.target.value) || 0 })
                   }
@@ -101,8 +102,9 @@ export function LineItemsForm({ items, onChange }: Props) {
                   step="0.01"
                   value={item.prix_unitaire_ht === 0 ? '' : item.prix_unitaire_ht}
                   placeholder="0.00"
+                  onFocus={(e) => e.target.select()}
                   onChange={(e) =>
-                    updateItem(item.id, { prix_unitaire_ht: parseFloat(e.target.value) || 0 })
+                    updateItem(item.id, { prix_unitaire_ht: e.target.value === '' ? 0 : parseFloat(e.target.value) || 0 })
                   }
                 />
               </div>
