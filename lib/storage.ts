@@ -6,8 +6,6 @@ const KEYS = {
   counter: 'kalyos_devis_counter',
 } as const;
 
-export const MAX_FREE_QUOTES = 5;
-
 function safeGet<T>(key: string): T | null {
   if (typeof window === 'undefined') return null;
   try {

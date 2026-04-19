@@ -151,12 +151,11 @@ export async function generateQuotePDF(quote: Quote): Promise<void> {
   doc.text(legalLines, marginL, y);
   y += legalLines.length * 4 + 4;
 
-  // Kalyos footer
+  // Kalyos footer — discreet, non-removable
   const footerY = 287;
-  doc.setDrawColor('#e7e5e4');
-  doc.line(marginL, footerY - 4, pageW - marginR, footerY - 4);
-  doc.setFontSize(7);
-  doc.setTextColor('#a8a29e');
+  doc.setFontSize(8);
+  doc.setTextColor('#78716c');
+  doc.setFont('helvetica', 'normal');
   doc.text(KALYOS_FOOTER, pageW / 2, footerY, { align: 'center' });
 
   doc.save(`${quote.numero}.pdf`);

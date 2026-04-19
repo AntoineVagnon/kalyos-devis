@@ -20,5 +20,4 @@ export function getLegalMentions(profile: ArtisanProfile): string {
   return mentions[profile.statut_juridique](profile);
 }
 
-export const KALYOS_FOOTER =
-  'Devis généré avec Kalyos Mini-App — Version complète en 14 jours / 7 500 EUR HT';
+export const KALYOS_FOOTER = 'Devis généré avec kalyos.co';

@@ -17,7 +17,6 @@ import {
   generateQuoteNumber,
   getExpiresAt,
   saveQuote,
-  MAX_FREE_QUOTES,
 } from '@/lib/storage';
 import { quoteTotals } from '@/lib/calculations';
 import { buildShareUrl } from '@/lib/share';
@@ -39,7 +38,6 @@ const DEFAULT_CLIENT: ClientInfo = { nom: '', adresse: '', email: '' };
 type Tab = 'artisan' | 'client' | 'lignes';
 
 export default function HomePage() {
-  const [counter, setCounter] = useState(0);
   const [artisan, setArtisan] = useState<ArtisanProfile>(DEFAULT_ARTISAN);
   const [client, setClient] = useState<ClientInfo>(DEFAULT_CLIENT);
   const [lineItems, setLineItems] = useState<LineItem[]>([]);
@@ -52,10 +50,7 @@ export default function HomePage() {
   useEffect(() => {
     const profile = getProfile();
     if (profile) setArtisan(profile);
-    setCounter(getCounter());
   }, []);
-
-  const limitReached = counter >= MAX_FREE_QUOTES;
 
   function handleArtisanChange(profile: ArtisanProfile) {
     setArtisan(profile);
@@ -103,8 +98,7 @@ export default function HomePage() {
 
       await generateQuotePDF(quote);
       saveQuote(quote);
-      const newCount = incrementCounter();
-      setCounter(newCount);
+      incrementCounter();
 
       const url = buildShareUrl(quote);
       setShareUrl(url);
@@ -129,42 +123,9 @@ export default function HomePage() {
     { id: 'lignes', label: 'Prestations' },
   ];
 
-  if (limitReached) {
-    return (
-      <>
-        <UpgradeBanner count={counter} />
-        <main className="min-h-screen flex items-center justify-center pt-12 px-4">
-          <div className="max-w-md text-center space-y-6">
-            <p className="text-xs font-medium tracking-widest uppercase text-[#78716c]">
-              Limite atteinte
-            </p>
-            <h1 className="text-3xl font-bold text-[#1c1917] leading-tight">
-              Vous avez généré vos 5 devis gratuits.
-            </h1>
-            <p className="text-[#78716c]">
-              Passez à la version complète pour des devis illimités, le suivi client, les relances
-              automatiques et bien plus.
-            </p>
-            <a
-              href="https://kalyos.co/contact"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block w-full bg-[#1c1917] text-[#fafaf9] font-semibold py-4 px-6 rounded hover:bg-[#292524] transition-colors text-center"
-            >
-              Passer à la version complète — 7 500 EUR HT / 14 jours
-            </a>
-            <p className="text-xs text-[#78716c]">
-              Un expert Kalyos vous contacte sous 24h pour démarrer votre projet.
-            </p>
-          </div>
-        </main>
-      </>
-    );
-  }
-
   return (
     <>
-      <UpgradeBanner count={counter} />
+      <UpgradeBanner />
       <main className="pt-16 pb-16 px-4 max-w-3xl mx-auto space-y-8">
         {/* Header */}
         <div className="pt-8 space-y-2">
